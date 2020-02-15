@@ -71,8 +71,8 @@ var getOffer = function () {
   offer.checkin = checkArray[getRandomNumber(0, 3)];
   offer.checkout = checkArray[getRandomNumber(0, 3)];
   offer.features = getFeaturessArray(getRandomNumber(0, 6));
-  offer.description = "random description";
-  offer.photos = "http://o0.github.io/assets/images/tokyo/hotel.jpg";
+  offer.description = 'random description';
+  offer.photos = 'http://o0.github.io/assets/images/tokyo/hotel.jpg';
   return offer;
 };
 
@@ -122,4 +122,3 @@ var pinAppend = function (advertisementArray) {
 };
 
 pinAppend(constractCardssList());
-console.log(advertisementArray);
