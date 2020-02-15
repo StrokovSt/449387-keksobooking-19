@@ -9,7 +9,7 @@ var pinsList = document.querySelector('.map__pins');
 var actualWidth = mapSection.clientWidth;
 var MIN_HEIGHT = 130;
 var MAX_HEIGHT = 630;
-var advertisementArray = [];
+
 var offerTypeArray = ['palace', 'flat', 'house', 'bungalo'];
 var checkArray = ['12:00', '13:00', '14:00'];
 var titleArray = ['Guest House', 'Anime Land', 'Bushido&sakura', 'Udonland', 'Ise Sueyoshi', 'NINJA SHINJUKU', 'Mugi no Oto'];
@@ -54,7 +54,7 @@ var getFeaturessArray = function (userNumber) {
 
 var getAutor = function (userNumber) {
   var avatar = {};
-  avatar['avatar'] = ('img/avatars/user0' + userNumber + '.png');
+  avatar.avatar = ('img/avatars/user0' + userNumber + '.png');
   return avatar;
 };
 
@@ -62,17 +62,17 @@ var getAutor = function (userNumber) {
 
 var getOffer = function () {
   var offer = {};
-  offer['title'] = titleArray[getRandomNumber(0, titleArray.length)];
-  offer['address'] = 'Координаты: ' + getRandomNumber(1, 90, true) + ', ' + getRandomNumber(1, 90, true);
-  offer['price'] = getRandomNumber(1000, 10000);
-  offer['type'] = offerTypeArray[getRandomNumber(0, 4)];
-  offer['rooms'] = getRandomNumber(0, 5);
-  offer['guests'] = getRandomNumber(0, 10);
-  offer['checkin'] = checkArray[getRandomNumber(0, 3)];
-  offer['checkout'] = checkArray[getRandomNumber(0, 3)];
-  offer['features'] = getFeaturessArray(getRandomNumber(0, 6));
-  offer['description'] = "random description";
-  offer['photos'] = "http://o0.github.io/assets/images/tokyo/hotel.jpg";
+  offer.title = titleArray[getRandomNumber(0, titleArray.length)];
+  offer.address = 'Координаты: ' + getRandomNumber(1, 90, true) + ', ' + getRandomNumber(1, 90, true);
+  offer.price = getRandomNumber(1000, 10000);
+  offer.type = offerTypeArray[getRandomNumber(0, 4)];
+  offer.rooms = getRandomNumber(0, 5);
+  offer.guests = getRandomNumber(0, 10);
+  offer.checkin = checkArray[getRandomNumber(0, 3)];
+  offer.checkout = checkArray[getRandomNumber(0, 3)];
+  offer.features = getFeaturessArray(getRandomNumber(0, 6));
+  offer.description = "random description";
+  offer.photos = "http://o0.github.io/assets/images/tokyo/hotel.jpg";
   return offer;
 };
 
@@ -80,27 +80,29 @@ var getOffer = function () {
 
 var getLocation = function () {
   var location = {};
-  location['x'] = getRandomNumber(25, actualWidth, true);
-  location['y'] = getRandomNumber(MIN_HEIGHT, MAX_HEIGHT, true);
+  location.x = getRandomNumber(25, actualWidth, true);
+  location.y = getRandomNumber(MIN_HEIGHT, MAX_HEIGHT, true);
   return location;
 };
 
 // Функция создания объявления
 
 var constractCardssList = function () {
+  var advertisementArray = [];
   var randomAvatarArray = getRandomNumbersArray(1, 9);
   for (var i = 0; i < 8; i++) {
     var card = {};
+    card.autor = getAutor(randomAvatarArray[i]);
+    card.offer = getOffer();
+    card.location = getLocation();
     advertisementArray.push(card);
-    advertisementArray[i]['autor'] = getAutor(randomAvatarArray[i]);
-    advertisementArray[i]['offer'] = getOffer();
-    advertisementArray[i]['location'] = getLocation();
   }
+  return advertisementArray;
 };
 
 // Функция оздания DOM-элемента - пина объявления
 
-var getPin = function (pinNumber) {
+var getPin = function (advertisementArray, pinNumber) {
   var pinElement = pin.cloneNode(true);
   var pinImg = pinElement.querySelector('img');
   pinElement.style = 'left: ' + (advertisementArray[pinNumber].location.x - 25) + 'px; top: ' + (advertisementArray[pinNumber].location.y - 70) + 'px;';
@@ -111,14 +113,13 @@ var getPin = function (pinNumber) {
 
 // Функция добавления пина объявления
 
-var pinAppend = function () {
+var pinAppend = function (advertisementArray) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < 8; i++) {
-    fragment.appendChild(getPin(i));
+    fragment.appendChild(getPin(advertisementArray, i));
   }
   pinsList.appendChild(fragment);
 };
 
-constractCardssList();
-pinAppend();
+pinAppend(constractCardssList());
 console.log(advertisementArray);
