@@ -6,7 +6,7 @@ mapSection.classList.remove('map--faded');
 var pin = document.querySelector('#pin').content.querySelector('.map__pin');
 var pinsList = document.querySelector('.map__pins');
 
-var actualWidth = document.body.clientWidth;
+var actualWidth = mapSection.clientWidth;
 var MIN_HEIGHT = 130;
 var MAX_HEIGHT = 630;
 var advertisementArray = [];
@@ -60,19 +60,19 @@ var getAutor = function (userNumber) {
 
 // Функция создания объекта - предложения ('offer')
 
-var getOffer = function (offerTitle, offerPrice, offerType, offerRooms, offerGuests, offerCheckin, offerCheckout, offerFeatures, offerDescription, offerPhotos) {
+var getOffer = function () {
   var offer = {};
-  offer['title'] = offerTitle;
+  offer['title'] = titleArray[getRandomNumber(0, titleArray.length)];
   offer['address'] = 'Координаты: ' + getRandomNumber(1, 90, true) + ', ' + getRandomNumber(1, 90, true);
-  offer['price'] = offerPrice;
-  offer['type'] = offerType;
-  offer['rooms'] = offerRooms;
-  offer['guests'] = offerGuests;
-  offer['checkin'] = offerCheckin;
-  offer['checkout'] = offerCheckout;
-  offer['features'] = getFeaturessArray(offerFeatures);
-  offer['description'] = offerDescription;
-  offer['photos'] = offerPhotos;
+  offer['price'] = getRandomNumber(1000, 10000);
+  offer['type'] = offerTypeArray[getRandomNumber(0, 4)];
+  offer['rooms'] = getRandomNumber(0, 5);
+  offer['guests'] = getRandomNumber(0, 10);
+  offer['checkin'] = checkArray[getRandomNumber(0, 3)];
+  offer['checkout'] = checkArray[getRandomNumber(0, 3)];
+  offer['features'] = getFeaturessArray(getRandomNumber(0, 6));
+  offer['description'] = "random description";
+  offer['photos'] = "http://o0.github.io/assets/images/tokyo/hotel.jpg";
   return offer;
 };
 
@@ -80,7 +80,7 @@ var getOffer = function (offerTitle, offerPrice, offerType, offerRooms, offerGue
 
 var getLocation = function () {
   var location = {};
-  location['x'] = getRandomNumber(0, actualWidth, true);
+  location['x'] = getRandomNumber(25, actualWidth, true);
   location['y'] = getRandomNumber(MIN_HEIGHT, MAX_HEIGHT, true);
   return location;
 };
@@ -93,7 +93,7 @@ var constractCardssList = function () {
     var card = {};
     advertisementArray.push(card);
     advertisementArray[i]['autor'] = getAutor(randomAvatarArray[i]);
-    advertisementArray[i]['offer'] = getOffer(titleArray[getRandomNumber(0, titleArray.length)], getRandomNumber(1000, 10000), offerTypeArray[getRandomNumber(0, 4)], getRandomNumber(0, 5), getRandomNumber(0, 15), checkArray[getRandomNumber(0, 3)], checkArray[getRandomNumber(0, 3)], getRandomNumber(0, 6));
+    advertisementArray[i]['offer'] = getOffer();
     advertisementArray[i]['location'] = getLocation();
   }
 };
@@ -103,7 +103,7 @@ var constractCardssList = function () {
 var getPin = function (pinNumber) {
   var pinElement = pin.cloneNode(true);
   var pinImg = pinElement.querySelector('img');
-  pinElement.style = 'left: ' + advertisementArray[pinNumber].location.x + 'px; top: ' + advertisementArray[pinNumber].location.y + 'px;';
+  pinElement.style = 'left: ' + (advertisementArray[pinNumber].location.x - 25) + 'px; top: ' + (advertisementArray[pinNumber].location.y - 70) + 'px;';
   pinImg.alt = advertisementArray[pinNumber].offer.title;
   pinImg.src = advertisementArray[pinNumber].autor.avatar;
   return pinElement;
@@ -112,12 +112,13 @@ var getPin = function (pinNumber) {
 // Функция добавления пина объявления
 
 var pinAppend = function () {
+  var fragment = document.createDocumentFragment();
   for (var i = 0; i < 8; i++) {
-    var fragment = document.createDocumentFragment();
     fragment.appendChild(getPin(i));
-    pinsList.appendChild(fragment);
   }
+  pinsList.appendChild(fragment);
 };
 
 constractCardssList();
 pinAppend();
+console.log(advertisementArray);
