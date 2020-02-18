@@ -1,14 +1,27 @@
 'use strict';
 
 var mapSection = document.querySelector('.map');
-mapSection.classList.remove('map--faded');
-
 var pin = document.querySelector('#pin').content.querySelector('.map__pin');
+var mainPin = document.querySelector('.map__pin--main');
 var card = document.querySelector('#card').content.querySelector('.map__card');
 var pinsList = document.querySelector('.map__pins');
 var filerContainer = document.querySelector('.map__filters-container');
+var fieldsetList = document.querySelector('.ad-form');
+var mapFilterList = document.querySelector('.map__filters');
+var address = document.querySelector('#address');
+var price = document.querySelector('#price');
+var type = document.querySelector('#type');
+var timein = document.querySelector('#timein');
+var timeout = document.querySelector('#timeout');
+var roomNumber = document.querySelector('#room_number');
+var capacity = document.querySelector('#capacity');
+var capacityClone = capacity.cloneNode(true);
 
 var actualWidth = mapSection.clientWidth;
+var pinWidth = mainPin.clientWidth;
+var pinHeight = mainPin.clientHeight;
+var mainPinLeft = mainPin.offsetLeft;
+var mainPinTop = mainPin.offsetTop;
 var MIN_HEIGHT = 130;
 var MAX_HEIGHT = 630;
 
@@ -16,7 +29,106 @@ var offerTypeArray = ['palace', 'flat', 'house', 'bungalo'];
 var checkArray = ['12:00', '13:00', '14:00'];
 var titleArray = ['Guest House', 'Anime Land', 'Bushido&sakura', 'Udonland', 'Ise Sueyoshi', 'NINJA SHINJUKU', 'Mugi no Oto'];
 
-//  Вспомогательные функции
+//  --------------------------------------Загрузка и заполнение страницы
+
+//  Функция добавления атрибута disabled
+
+var setDisabled = function (fieldsetArray) {
+  for (var i = 0; i < fieldsetArray.length; i++) {
+    fieldsetArray[i].setAttribute('disabled', true);
+  }
+};
+
+//  Функция удаления атрибута disabled
+
+var deleteDisabled = function (fieldsetArray) {
+  for (var i = 0; i < fieldsetArray.length; i++) {
+    if (fieldsetArray[i].hasAttribute('disabled')) { // нужна ли эта проверка?
+      fieldsetArray[i].removeAttribute('disabled');
+    }
+  }
+};
+
+setDisabled(fieldsetList);
+setDisabled(mapFilterList);
+
+//  Заполнение форм
+
+address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + Math.round(pinHeight / 2));
+
+//  Функция изменения атрибута rice.min и смене значений в селекте type
+
+var onTypeChange = function () {
+  if (type.value === 'bungalo') {
+    price.min = 0;
+    price.placeholder = 0;
+  } else if (type.value === 'flat') {
+    price.min = 1000;
+    price.placeholder = 1000;
+  } else if (type.value === 'house') {
+    price.min = 5000;
+    price.placeholder = 5000;
+  } else if (type.value === 'palace') {
+    price.min = 10000;
+    price.placeholder = 10000;
+  }
+};
+
+onTypeChange();
+type.addEventListener('change', onTypeChange);
+
+//  Функция синхронизации timein.value и timeout.value
+
+var onTimeinChange = function () {
+  var changer = timein.value;
+  timeout.value = changer;
+};
+
+var onTimeoutChange = function () {
+  var changer = timeout.value;
+  timein.value = changer;
+};
+
+timein.addEventListener('change', onTimeinChange);
+timeout.addEventListener('change', onTimeoutChange);
+
+//  Функция очистки списка
+
+function clear(elem) {
+  while (elem.firstChild) {
+    elem.firstChild.remove();
+  }
+}
+
+//  Функция заполнения селекта capacity
+
+var getCapacityList = function (min, max) {
+  clear(capacity);
+  for (var i = min; i < max; i++) {
+    var capacityCloneOption = capacityClone[i].cloneNode(true);
+    capacityCloneOption.removeAttribute('selected');
+    capacity.insertBefore(capacityCloneOption, capacity[0]);
+  }
+  capacity[0].setAttribute('selected', true);
+};
+
+//  Функция синхронизации параметров roomNUmber и capacity
+
+var onRoomNumberChange = function () {
+  if (roomNumber.value === '1') {
+    getCapacityList(2, 3);
+  } else if (roomNumber.value === '2') {
+    getCapacityList(1, 3);
+  } else if (roomNumber.value === '3') {
+    getCapacityList(0, 3);
+  } else if (roomNumber.value === '100') {
+    getCapacityList(3, 4);
+  }
+};
+
+getCapacityList(2, 3);
+roomNumber.addEventListener('change', onRoomNumberChange);
+
 
 //  Функция генерации случайного числа
 
@@ -39,14 +151,6 @@ var getRandomNumbersArray = function (min, max) {
   }
   return randomNumberArray;
 };
-
-//  Функция очистки списка
-
-function clear(elem) {
-  while (elem.firstChild) {
-    elem.firstChild.remove();
-  }
-}
 
 // Создание массива features случайной длины
 
@@ -222,7 +326,6 @@ var getCard = function (advertisementArray) {
 
   cardImg.src = advertisementArray[0].autor.avatar;
 
-
   // Внутренняя функция для добавления фотографий в карточку
 
   var getCardPhotosList = function (photosArray) {
@@ -259,5 +362,25 @@ var cardAppend = function (advertisementArray) {
   mapSection.insertBefore(fragment, filerContainer);
 };
 
-pinAppend(constractCardssList());
-cardAppend(constractCardssList());
+//  pinAppend(constractCardssList());
+//  cardAppend(constractCardssList());
+
+//  --------------------------Взаимодействие пользователя с сайтом
+
+mainPin.addEventListener('mousedown', function (evt) {
+  address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + mainPinTop;
+  if (evt.which === 1) {
+    deleteDisabled(fieldsetList);
+    deleteDisabled(mapFilterList);
+    fieldsetList.classList.remove('ad-form--disabled');
+  }
+});
+
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + Math.round(pinHeight / 2));
+    deleteDisabled(fieldsetList);
+    deleteDisabled(mapFilterList);
+    fieldsetList.classList.remove('ad-form--disabled');
+  }
+});
