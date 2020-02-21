@@ -5,6 +5,7 @@ var pin = document.querySelector('#pin').content.querySelector('.map__pin');
 var mainPin = document.querySelector('.map__pin--main');
 var card = document.querySelector('#card').content.querySelector('.map__card');
 var pinsList = document.querySelector('.map__pins');
+var pinsArray = document.getElementsByClassName('map__pin');
 var filerContainer = document.querySelector('.map__filters-container');
 var fieldsetList = document.querySelector('.ad-form');
 var mapFilterList = document.querySelector('.map__filters');
@@ -24,10 +25,28 @@ var mainPinLeft = mainPin.offsetLeft;
 var mainPinTop = mainPin.offsetTop;
 var MIN_HEIGHT = 130;
 var MAX_HEIGHT = 630;
+var pinsNumber = 8;
+var ESC_KEY = 'Escape';
 
 var offerTypeArray = ['palace', 'flat', 'house', 'bungalo'];
+var offerTypeArrayRus = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 var checkArray = ['12:00', '13:00', '14:00'];
 var titleArray = ['Guest House', 'Anime Land', 'Bushido&sakura', 'Udonland', 'Ise Sueyoshi', 'NINJA SHINJUKU', 'Mugi no Oto'];
+var defaultFeaturesArray = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var offerPhotos = [
+  'https://www.tripzaza.com/ru/destinations/files/2018/06/oteli-v-Tokio-5-zve--zd-e1528031563354.jpg', 'https://cdn.ostrovok.ru/t/640x400/content/9c/9c/9c9c607f135c3723b8d558a2550c80e81068363c.jpeg', 'https://www.orangesmile.com/hotel-slideshow/jp/-246227__45405.jpg',
+  'https://pix10.agoda.net/hotelImages/240/240563/240563_17062714500054091427.jpg?s=1024x768',
+  'https://r-cf.bstatic.com/images/hotel/max1024x768/193/193427930.jpg'
+];
+var offerDescription = ['Курортный отель APA Nishishinjuku-Gochome-Eki Tower расположен в Токио. К услугам       гостей бесплатный Wi-Fi.',
+
+  'Капсульный отель First Cabin Tsukiji отлично расположен всего в 1 минуте ходьбы от станции метро Tsukiji и в 5 минутах ходьбы от популярного рыбного рынка Цукидзи.',
+
+  'Отель LANDABOUT TOKYO с рестораном, баром, общим лаунджем и бесплатным Wi-Fi расположен в Токио, в 400 м от храма Кеммио-ин и в 600 м от храма Шуншо-ин.',
+
+  'Отель Shinagawa Prince East Tower с видом на город расположен в Токио, в 3,7 км от телевизионной башни Токио.',
+
+  'Отель Sotetsu Fresa Inn Nihombashi Kayabacho. Номера с бесплатным проводным доступом в интернет лаконично оформлены в западном стиле.'];
 
 //  --------------------------------------Загрузка и заполнение страницы
 
@@ -152,16 +171,15 @@ var getRandomNumbersArray = function (min, max) {
   return randomNumberArray;
 };
 
-// Создание массива features случайной длины
+// Создание случайных массивов
 
-var getFeaturessArray = function (userNumber) {
-  var featuresArray = [];
+var getRandomArray = function (userNumber, chosenArray) {
+  var newRandomArray = [];
   var randomArray = getRandomNumbersArray(0, userNumber + 1);
-  var defaultFeaturesArray = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   for (var i = 0; i < userNumber; i++) {
-    featuresArray[i] = defaultFeaturesArray[randomArray[i]];
+    newRandomArray[i] = chosenArray[randomArray[i]];
   }
-  return featuresArray;
+  return newRandomArray;
 };
 
 // Функция создания объекта - автора ('autor')
@@ -184,11 +202,9 @@ var getOffer = function () {
   offer.guests = getRandomNumber(1, 10);
   offer.checkin = checkArray[getRandomNumber(0, 3)];
   offer.checkout = checkArray[getRandomNumber(0, 3)];
-  offer.features = getFeaturessArray(getRandomNumber(0, 6));
-  offer.description = 'Прекрасный отель в самом центре Токио. В номере две раздельных или одна большая кровать, ванная комната оборудована душевой кабиной,номер оснащен плазменной панелью со спутниковыми каналами';
-  offer.photos = [
-    'https://www.tripzaza.com/ru/destinations/files/2018/06/oteli-v-Tokio-5-zve--zd-e1528031563354.jpg', 'https://cdn.ostrovok.ru/t/640x400/content/9c/9c/9c9c607f135c3723b8d558a2550c80e81068363c.jpeg', 'https://www.orangesmile.com/hotel-slideshow/jp/-246227__45405.jpg'
-  ];
+  offer.features = getRandomArray(getRandomNumber(0, defaultFeaturesArray.length), defaultFeaturesArray);
+  offer.description = offerDescription[getRandomNumber(0, offerDescription.length)];
+  offer.photos = getRandomArray(getRandomNumber(0, offerPhotos.length), offerPhotos);
   return offer;
 };
 
@@ -206,7 +222,7 @@ var getLocation = function () {
 var constractCardssList = function () {
   var advertisementArray = [];
   var randomAvatarArray = getRandomNumbersArray(1, 9);
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < pinsNumber; i++) {
     var cardInfo = {};
     cardInfo.autor = getAutor(randomAvatarArray[i]);
     cardInfo.offer = getOffer();
@@ -224,123 +240,110 @@ var getPin = function (advertisementArray, pinNumber) {
   pinElement.style = 'left: ' + (advertisementArray[pinNumber].location.x - 25) + 'px; top: ' + (advertisementArray[pinNumber].location.y - 70) + 'px;';
   pinImg.alt = advertisementArray[pinNumber].offer.title;
   pinImg.src = advertisementArray[pinNumber].autor.avatar;
+  pinElement.classList.add('visually-hidden');
+  pinElement.classList.add(pinNumber);
+  pinElement.classList.add('second-pin');
+  pinImg.classList.add('pin__avatar');
+  pinImg.classList.add(pinNumber);
   return pinElement;
 };
 
-// Функция оздания DOM-элемента - карточки объявления
+// -----------------------------------Функция оздания/изменения DOM-элемента - карточки объявления
 
-var getCard = function (advertisementArray) {
-  var cardElement = card.cloneNode(true);
+var getCard = function (advertisementArray, advNumber, cardElement) {
+  var copyCard = card.cloneNode(true);
   var cardImg = cardElement.querySelector('.popup__avatar');
   var cardPhotos = cardElement.querySelector('.popup__photos');
-  var cardPhoto = cardPhotos.querySelector('.popup__photo');
 
-  // Заполнение поля title
+  // Заполнение полей
 
-  if (advertisementArray[0].offer.title === '' || advertisementArray[0].offer.title === undefined) {
-    cardElement.removeChild(cardElement.querySelector('.popup__title'));
+  cardElement.querySelector('.popup__title').textContent = advertisementArray[advNumber].offer.title;
+  cardElement.querySelector('.popup__text--address').textContent = advertisementArray[advNumber].offer.address;
+
+  if (advertisementArray[advNumber].offer.price === '' || advertisementArray[advNumber].offer.price === undefined) {
+    cardElement.querySelector('.popup__text--price').textContent = '';
   } else {
-    cardElement.querySelector('.popup__title').textContent = advertisementArray[0].offer.title;
+    cardElement.querySelector('.popup__text--price').textContent = advertisementArray[advNumber].offer.price + ' ₽/ночь';
   }
 
-  // Заполнение поля address
-
-  if (advertisementArray[0].offer.address === '' || advertisementArray[0].offer.address === undefined) {
-    cardElement.removeChild(cardElement.querySelector('.popup__text--address'));
-  } else {
-    cardElement.querySelector('.popup__text--address').textContent = advertisementArray[0].offer.address;
-  }
-
-  // Заполнение поля price
-
-  if (advertisementArray[0].offer.price === '' || advertisementArray[0].offer.price === undefined) {
-    cardElement.removeChild(cardElement.querySelector('.popup__text--price'));
-  } else {
-    cardElement.querySelector('.popup__text--price').textContent = advertisementArray[0].offer.price + ' ₽/ночь';
-  }
-
-  // Заполнение поля description
-
-  if (advertisementArray[0].offer.description === '' || advertisementArray[0].offer.description === undefined) {
-    cardElement.removeChild(cardElement.querySelector('.popup__description'));
-  } else {
-    cardElement.querySelector('.popup__description').textContent = advertisementArray[0].offer.description;
-  }
+  cardElement.querySelector('.popup__description').textContent = advertisementArray[advNumber].offer.description;
 
   // Заполнение поля type
 
-  if (advertisementArray[0].offer.type === '' || advertisementArray[0].offer.type === undefined) {
-    cardElement.removeChild(cardElement.querySelector('.popup__type'));
-  } else if (advertisementArray[0].offer.type === 'palace') {
-    cardElement.querySelector('.popup__type').textContent = 'Дворец';
-  } else if (advertisementArray[0].offer.type === 'flat') {
-    cardElement.querySelector('.popup__type').textContent = 'Квартира';
-  } else if (advertisementArray[0].offer.type === 'house') {
-    cardElement.querySelector('.popup__type').textContent = 'Дом';
-  } else {
-    cardElement.querySelector('.popup__type').textContent = 'Бунгало';
-  }
+  var fillType = function () {
+    for (var i = 0; i < offerTypeArrayRus.length; i++) {
+      if (advertisementArray[advNumber].offer.type === offerTypeArray[i]) {
+        cardElement.querySelector('.popup__type').textContent = offerTypeArrayRus[i];
+      }
+    }
+  };
+
+  fillType();
 
   // Заполнение поля text-capacity
 
-  if (advertisementArray[0].offer.rooms === '' || advertisementArray[0].offer.rooms === undefined || advertisementArray[0].offer.guests === '' || advertisementArray[0].offer.guests === undefined) {
-    cardElement.removeChild(cardElement.querySelector('.popup__text--capacity'));
+  if (advertisementArray[advNumber].offer.rooms === '' || advertisementArray[advNumber].offer.rooms === undefined || advertisementArray[advNumber].offer.guests === '' || advertisementArray[advNumber].offer.guests === undefined) {
+    cardElement.querySelector('.popup__text--capacity').textContent = '';
   } else {
-    cardElement.querySelector('.popup__text--capacity').textContent = advertisementArray[0].offer.rooms + ' комнаты для ' + advertisementArray[0].offer.guests + ' гостей';
+    cardElement.querySelector('.popup__text--capacity').textContent = advertisementArray[advNumber].offer.rooms + ' комнаты для ' + advertisementArray[advNumber].offer.guests + ' гостей';
   }
 
   // Заполнение поля text-time
 
-  if (advertisementArray[0].offer.checkin === '' || advertisementArray[0].offer.checkin === undefined || advertisementArray[0].offer.checkout === '' || advertisementArray[0].offer.checkout === undefined) {
-    cardElement.removeChild(cardElement.querySelector('.popup__text--time'));
+  if (advertisementArray[advNumber].offer.checkin === '' || advertisementArray[advNumber].offer.checkin === undefined || advertisementArray[advNumber].offer.checkout === '' || advertisementArray[advNumber].offer.checkout === undefined) {
+    cardElement.querySelector('.popup__text--time').textContent = '';
   } else {
-    cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advertisementArray[0].offer.checkin + ', выезд до ' + advertisementArray[0].offer.checkout;
+    cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advertisementArray[advNumber].offer.checkin + ', выезд до ' + advertisementArray[advNumber].offer.checkout;
   }
 
   // Заполнение поля features
 
-  var cardFeaturesArray = advertisementArray[0].offer.features;
-  if (cardFeaturesArray === '' || cardFeaturesArray === undefined) {
-    cardElement.removeChild(cardElement.querySelector('.popup__features'));
-  }
-  if (cardFeaturesArray.indexOf('wifi') !== -1) {
-    cardElement.querySelector('.popup__features').removeChild(cardElement.querySelector('.popup__feature--wifi'));
-  }
-  if (cardFeaturesArray.indexOf('dishwasher') !== -1) {
-    cardElement.querySelector('.popup__features').removeChild(cardElement.querySelector('.popup__feature--dishwasher'));
-  }
-  if (cardFeaturesArray.indexOf('parking') !== -1) {
-    cardElement.querySelector('.popup__features').removeChild(cardElement.querySelector('.popup__feature--parking'));
-  }
-  if (cardFeaturesArray.indexOf('washer') !== -1) {
-    cardElement.querySelector('.popup__features').removeChild(cardElement.querySelector('.popup__feature--washer'));
-  }
-  if (cardFeaturesArray.indexOf('elevator') !== -1) {
-    cardElement.querySelector('.popup__features').removeChild(cardElement.querySelector('.popup__feature--elevator'));
-  }
-  if (cardFeaturesArray.indexOf('conditioner') !== -1) {
-    cardElement.querySelector('.popup__features').removeChild(cardElement.querySelector('.popup__feature--conditioner'));
-  }
+  var cardFeaturesArray = advertisementArray[advNumber].offer.features;
+  var popupFeatures = cardElement.querySelector('.popup__features');
+  var copyCardFetures = copyCard.querySelectorAll('.popup__feature');
 
-  // Заполнение поля avatar
+  clear(popupFeatures);
 
-  cardImg.src = advertisementArray[0].autor.avatar;
-
-  // Внутренняя функция для добавления фотографий в карточку
-
-  var getCardPhotosList = function (photosArray) {
-    clear(cardPhotos);
-    for (var i = 0; i < photosArray.length; i++) {
-      var newPhoto = cardPhoto.cloneNode(true);
-      newPhoto.src = photosArray[i];
-      cardPhotos.appendChild(newPhoto);
+  var fillFeatures = function () {
+    if (cardFeaturesArray) {
+      for (var i = 0; i < cardFeaturesArray.length; i++) {
+        popupFeatures.appendChild(copyCardFetures[i]);
+      }
+    } else {
+      popupFeatures.textContent = '';
     }
   };
 
-  // Заполнение поля photos
+  fillFeatures();
 
-  getCardPhotosList(advertisementArray[0].offer.photos);
+  // Заполнение поля avatar
 
+  cardImg.src = advertisementArray[advNumber].autor.avatar;
+
+  // Внутренняя функция для добавления фотографий в карточку. Заполнение поля photos
+
+  var getCardPhotosList = function (photosArray) {
+    clear(cardPhotos);
+    if (photosArray.length !== 0) {
+      for (var i = 0; i < photosArray.length; i++) {
+        var newPhoto = document.createElement('img');
+        newPhoto.width = 45;
+        newPhoto.height = 45;
+        newPhoto.alt = 'Фотография жилья';
+        newPhoto.src = photosArray[i];
+        newPhoto.classList.add('popup__photo');
+        cardPhotos.appendChild(newPhoto);
+      }
+    }
+  };
+
+  if (advertisementArray[advNumber].offer.photos !== undefined) {
+    getCardPhotosList(advertisementArray[advNumber].offer.photos);
+  } else {
+    clear(cardPhotos);
+  }
+
+  cardElement.classList.add('visually-hidden');
   return cardElement;
 };
 
@@ -348,7 +351,7 @@ var getCard = function (advertisementArray) {
 
 var pinAppend = function (advertisementArray) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < pinsNumber; i++) {
     fragment.appendChild(getPin(advertisementArray, i));
   }
   pinsList.appendChild(fragment);
@@ -356,14 +359,15 @@ var pinAppend = function (advertisementArray) {
 
 // Функция добавления карточки объявления
 
-var cardAppend = function (advertisementArray) {
+var cardAppend = function (advertisementArray, advNumber) {
   var fragment = document.createDocumentFragment();
-  fragment.appendChild(getCard(advertisementArray));
+  fragment.appendChild(getCard(advertisementArray, advNumber, card.cloneNode(true)));
   mapSection.insertBefore(fragment, filerContainer);
 };
 
-//  pinAppend(constractCardssList());
-//  cardAppend(constractCardssList());
+var cardsList = constractCardssList();
+pinAppend(cardsList);
+cardAppend(cardsList, 0);
 
 //  --------------------------Взаимодействие пользователя с сайтом
 
@@ -373,6 +377,11 @@ mainPin.addEventListener('mousedown', function (evt) {
     deleteDisabled(fieldsetList);
     deleteDisabled(mapFilterList);
     fieldsetList.classList.remove('ad-form--disabled');
+    mapSection.classList.remove('map--faded');
+
+    for (var i = 1; i < pinsArray.length; i++) {
+      pinsArray[i].classList.remove('visually-hidden');
+    }
   }
 });
 
@@ -382,5 +391,41 @@ mainPin.addEventListener('keydown', function (evt) {
     deleteDisabled(fieldsetList);
     deleteDisabled(mapFilterList);
     fieldsetList.classList.remove('ad-form--disabled');
+    mapSection.classList.remove('map--faded');
+
+    for (var i = 1; i < pinsArray.length; i++) {
+      pinsArray[i].classList.remove('visually-hidden');
+    }
   }
 });
+
+var realCard = mapSection.getElementsByTagName('article');
+var popupCloseButton = realCard[0].querySelector('.popup__close');
+
+var onPopupEscPress = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closePopup();
+  }
+};
+
+var closePopup = function () {
+  realCard[0].classList.add('visually-hidden');
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+
+var onSecondPinClick = function (evt) {
+  var target = evt.target;
+  if (target.tagName === 'BUTTON' || target.tagName === 'IMG') {
+    var targetClass = Number(target.classList[1]);
+    for (var i = 0; i < pinsNumber; i++) {
+      if (targetClass === i) {
+        getCard(cardsList, i, realCard[0]);
+        realCard[0].classList.remove('visually-hidden');
+        document.addEventListener('keydown', onPopupEscPress);
+      }
+    }
+  }
+};
+
+popupCloseButton.addEventListener('click', closePopup);
+pinsList.addEventListener('click', onSecondPinClick);
