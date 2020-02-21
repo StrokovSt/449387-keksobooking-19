@@ -371,36 +371,32 @@ cardAppend(cardsList, 0);
 
 //  --------------------------Взаимодействие пользователя с сайтом
 
-mainPin.addEventListener('mousedown', function (evt) {
-  address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + mainPinTop;
-  if (evt.which === 1) {
-    deleteDisabled(fieldsetList);
-    deleteDisabled(mapFilterList);
-    fieldsetList.classList.remove('ad-form--disabled');
-    mapSection.classList.remove('map--faded');
+var realCard = mapSection.getElementsByTagName('article');
+var popupCloseButton = realCard[0].querySelector('.popup__close');
 
-    for (var i = 1; i < pinsArray.length; i++) {
-      pinsArray[i].classList.remove('visually-hidden');
-    }
+var mapActive = function () {
+  address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + mainPinTop;
+  deleteDisabled(fieldsetList);
+  deleteDisabled(mapFilterList);
+  fieldsetList.classList.remove('ad-form--disabled');
+  mapSection.classList.remove('map--faded');
+
+  for (var i = 1; i < pinsArray.length; i++) {
+    pinsArray[i].classList.remove('visually-hidden');
+  }
+};
+
+mainPin.addEventListener('mousedown', function (evt) {
+  if (evt.which === 1) {
+    mapActive();
   }
 });
 
 mainPin.addEventListener('keydown', function (evt) {
   if (evt.key === 'Enter') {
-    address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + Math.round(pinHeight / 2));
-    deleteDisabled(fieldsetList);
-    deleteDisabled(mapFilterList);
-    fieldsetList.classList.remove('ad-form--disabled');
-    mapSection.classList.remove('map--faded');
-
-    for (var i = 1; i < pinsArray.length; i++) {
-      pinsArray[i].classList.remove('visually-hidden');
-    }
+    mapActive();
   }
 });
-
-var realCard = mapSection.getElementsByTagName('article');
-var popupCloseButton = realCard[0].querySelector('.popup__close');
 
 var onPopupEscPress = function (evt) {
   if (evt.key === ESC_KEY) {
