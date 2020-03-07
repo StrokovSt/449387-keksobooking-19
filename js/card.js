@@ -7,30 +7,30 @@
   var offerTypeArray = ['palace', 'flat', 'house', 'bungalo'];
   var offerTypeArrayRus = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 
-  window.getCard = function (advertisementArray, advNumber, cardElement) {
+  window.getCard = function (advertisementArray, advNumber) {
     var copyCard = card.cloneNode(true);
-    var cardImg = cardElement.querySelector('.popup__avatar');
-    var cardPhotos = cardElement.querySelector('.popup__photos');
+    var cardImg = copyCard.querySelector('.popup__avatar');
+    var cardPhotos = copyCard.querySelector('.popup__photos');
 
     // Заполнение полей
 
-    cardElement.querySelector('.popup__title').textContent = advertisementArray[advNumber].offer.title;
-    cardElement.querySelector('.popup__text--address').textContent = advertisementArray[advNumber].offer.address;
+    copyCard.querySelector('.popup__title').textContent = advertisementArray[advNumber].offer.title;
+    copyCard.querySelector('.popup__text--address').textContent = advertisementArray[advNumber].offer.address;
 
     if (advertisementArray[advNumber].offer.price === '' || advertisementArray[advNumber].offer.price === undefined) {
-      cardElement.querySelector('.popup__text--price').textContent = '';
+      copyCard.querySelector('.popup__text--price').textContent = '';
     } else {
-      cardElement.querySelector('.popup__text--price').textContent = advertisementArray[advNumber].offer.price + ' ₽/ночь';
+      copyCard.querySelector('.popup__text--price').textContent = advertisementArray[advNumber].offer.price + ' ₽/ночь';
     }
 
-    cardElement.querySelector('.popup__description').textContent = advertisementArray[advNumber].offer.description;
+    copyCard.querySelector('.popup__description').textContent = advertisementArray[advNumber].offer.description;
 
     // Заполнение поля type
 
     var fillType = function () {
       for (var i = 0; i < offerTypeArrayRus.length; i++) {
         if (advertisementArray[advNumber].offer.type === offerTypeArray[i]) {
-          cardElement.querySelector('.popup__type').textContent = offerTypeArrayRus[i];
+          copyCard.querySelector('.popup__type').textContent = offerTypeArrayRus[i];
         }
       }
     };
@@ -40,23 +40,23 @@
     // Заполнение поля text-capacity
 
     if (advertisementArray[advNumber].offer.rooms === '' || advertisementArray[advNumber].offer.rooms === undefined || advertisementArray[advNumber].offer.guests === '' || advertisementArray[advNumber].offer.guests === undefined) {
-      cardElement.querySelector('.popup__text--capacity').textContent = '';
+      copyCard.querySelector('.popup__text--capacity').textContent = '';
     } else {
-      cardElement.querySelector('.popup__text--capacity').textContent = advertisementArray[advNumber].offer.rooms + ' комнаты для ' + advertisementArray[advNumber].offer.guests + ' гостей';
+      copyCard.querySelector('.popup__text--capacity').textContent = advertisementArray[advNumber].offer.rooms + ' комнаты для ' + advertisementArray[advNumber].offer.guests + ' гостей';
     }
 
     // Заполнение поля text-time
 
     if (advertisementArray[advNumber].offer.checkin === '' || advertisementArray[advNumber].offer.checkin === undefined || advertisementArray[advNumber].offer.checkout === '' || advertisementArray[advNumber].offer.checkout === undefined) {
-      cardElement.querySelector('.popup__text--time').textContent = '';
+      copyCard.querySelector('.popup__text--time').textContent = '';
     } else {
-      cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advertisementArray[advNumber].offer.checkin + ', выезд до ' + advertisementArray[advNumber].offer.checkout;
+      copyCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + advertisementArray[advNumber].offer.checkin + ', выезд до ' + advertisementArray[advNumber].offer.checkout;
     }
 
     // Заполнение поля features
 
     var cardFeaturesArray = advertisementArray[advNumber].offer.features;
-    var popupFeatures = cardElement.querySelector('.popup__features');
+    var popupFeatures = copyCard.querySelector('.popup__features');
     var copyCardFetures = copyCard.querySelectorAll('.popup__feature');
 
     window.clear(popupFeatures);
@@ -75,7 +75,7 @@
 
     // Заполнение поля avatar
 
-    cardImg.src = advertisementArray[advNumber].autor.avatar;
+    cardImg.src = advertisementArray[advNumber].author.avatar;
 
     // Внутренняя функция для добавления фотографий в карточку. Заполнение поля photos
 
@@ -100,8 +100,7 @@
       window.clear(cardPhotos);
     }
 
-    cardElement.classList.add('visually-hidden');
-    return cardElement;
+    return copyCard;
   };
 
 })();

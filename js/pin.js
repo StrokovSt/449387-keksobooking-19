@@ -12,7 +12,7 @@
     var pinImg = pinElement.querySelector('img');
     pinElement.style = 'left: ' + (advertisementArray[pinNumber].location.x - 25) + 'px; top: ' + (advertisementArray[pinNumber].location.y - 70) + 'px;';
     pinImg.alt = advertisementArray[pinNumber].offer.title;
-    pinImg.src = advertisementArray[pinNumber].autor.avatar;
+    pinImg.src = advertisementArray[pinNumber].author.avatar;
     pinElement.classList.add('visually-hidden');
     pinElement.classList.add(pinNumber);
     pinElement.classList.add('second-pin');

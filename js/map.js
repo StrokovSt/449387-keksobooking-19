@@ -3,40 +3,46 @@
 'use strict';
 (function () {
   var mapSection = document.querySelector('.map');
-  var card = document.querySelector('#card').content.querySelector('.map__card');
   var pinsList = document.querySelector('.map__pins');
   var filerContainer = document.querySelector('.map__filters-container');
   var mainPin = document.querySelector('.map__pin--main');
   var pinsArray = document.getElementsByClassName('map__pin');
   var fieldsetList = document.querySelector('.ad-form');
   var mapFilterList = document.querySelector('.map__filters');
-  var address = document.querySelector('#address');
-  var pinWidth = mainPin.clientWidth;
-  var mainPinLeft = mainPin.offsetLeft;
-  var mainPinTop = mainPin.offsetTop;
+  var newArray;
+
   var ESC_KEY = 'Escape';
-  var pinsNumber = 8;
+
 
   // Функция добавления пина объявления
 
   var pinAppend = function (advertisementArray) {
+    newArray = advertisementArray;
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < pinsNumber; i++) {
+    for (var i = 0; i < advertisementArray.length; i++) {
       fragment.appendChild(window.getPin(advertisementArray, i));
     }
     pinsList.appendChild(fragment);
   };
 
+  window.load(pinAppend, window.errorPush);
+
   // Функция добавления карточки объявления
 
   var cardAppend = function (advertisementArray, advNumber) {
+    var realCard = document.querySelector('.map__card');
+    if (realCard) {
+      mapSection.removeChild(realCard);
+    }
     var fragment = document.createDocumentFragment();
-    fragment.appendChild(window.getCard(advertisementArray, advNumber, card.cloneNode(true)));
+    fragment.appendChild(window.getCard(advertisementArray, advNumber));
     mapSection.insertBefore(fragment, filerContainer);
+
+    var closeButton = document.querySelector('.popup__close');
+    closeButton.addEventListener('click', closePopup);
   };
 
   var mapActive = function () {
-    address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + mainPinTop;
     window.deleteDisabled(fieldsetList);
     window.deleteDisabled(mapFilterList);
     fieldsetList.classList.remove('ad-form--disabled');
@@ -66,7 +72,8 @@
   };
 
   var closePopup = function () {
-    realCard[0].classList.add('visually-hidden');
+    var realCard = document.querySelector('.map__card');
+    mapSection.removeChild(realCard);
     document.removeEventListener('keydown', onPopupEscPress);
   };
 
@@ -74,22 +81,14 @@
     var target = evt.target;
     if (target.tagName === 'BUTTON' || target.tagName === 'IMG') {
       var targetClass = Number(target.classList[1]);
-      for (var i = 0; i < pinsNumber; i++) {
+      for (var i = 0; i < newArray.length; i++) {
         if (targetClass === i) {
-          window.getCard(window.cardsList, i, realCard[0]);
-          realCard[0].classList.remove('visually-hidden');
+          cardAppend(newArray, i);
           document.addEventListener('keydown', onPopupEscPress);
         }
       }
     }
   };
 
-  window.cardsList = window.constractCardssList();
-  pinAppend(window.cardsList);
-  cardAppend(window.cardsList, 0);
-  var realCard = mapSection.getElementsByTagName('article');
-  var popupCloseButton = realCard[0].querySelector('.popup__close');
-  popupCloseButton.addEventListener('click', closePopup);
   pinsList.addEventListener('click', onSecondPinClick);
-
 })();
