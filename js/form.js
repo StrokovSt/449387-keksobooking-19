@@ -3,6 +3,7 @@
 'use strict';
 (function () {
   var fieldsetList = document.querySelector('.ad-form');
+  var fieldsetResetButton = document.querySelector('.ad-form__reset');
   var mapFilterList = document.querySelector('.map__filters');
   var address = document.querySelector('#address');
   var price = document.querySelector('#price');
@@ -35,6 +36,7 @@
       }
     }
   };
+
   window.setDisabled(fieldsetList);
   window.setDisabled(mapFilterList);
   //  Заполнение форм
@@ -104,5 +106,28 @@
 
   getCapacityList(2, 3);
   roomNumber.addEventListener('change', onRoomNumberChange);
+
+  //  Функция для успешной отправки формы
+
+  var formSubmission = function () {
+    fieldsetList.reset();
+    window.setDisabled(fieldsetList);
+    window.setDisabled(mapFilterList);
+  };
+
+  fieldsetList.addEventListener('submit', function (evt) {
+    window.save(new FormData(fieldsetList), formSubmission, window.errorPush);
+    evt.preventDefault();
+  });
+
+  fieldsetResetButton.addEventListener('click', function () {
+    fieldsetList.reset();
+  });
+
+  fieldsetResetButton.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Enter') {
+      fieldsetList.reset();
+    }
+  });
 
 })();

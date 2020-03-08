@@ -30,7 +30,7 @@
   window.save = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    var URL = 'https://js.dump.academy/code-and-magick';
+    var URL = 'https://js.dump.academy/keksobooking1';
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
