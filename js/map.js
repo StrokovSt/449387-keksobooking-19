@@ -13,19 +13,19 @@
 
   var ESC_KEY = 'Escape';
 
-
   // Функция добавления пина объявления
 
-  var pinAppend = function (advertisementArray) {
+  window.pinAppend = function (advertisementArray) {
     newArray = advertisementArray;
+    var pinNumber = advertisementArray.length > 5 ? 5 : advertisementArray.length;
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < advertisementArray.length; i++) {
+    for (var i = 0; i < pinNumber; i++) {
       fragment.appendChild(window.getPin(advertisementArray, i));
     }
     pinsList.appendChild(fragment);
   };
 
-  window.load(pinAppend, window.errorPush);
+  //  window.load(pinAppend, window.errorPush);
 
   // Функция добавления карточки объявления
 
@@ -39,7 +39,7 @@
     mapSection.insertBefore(fragment, filerContainer);
 
     var closeButton = document.querySelector('.popup__close');
-    closeButton.addEventListener('click', closePopup);
+    closeButton.addEventListener('click', window.closePopup);
   };
 
   var mapActive = function () {
@@ -67,24 +67,28 @@
 
   var onPopupEscPress = function (evt) {
     if (evt.key === ESC_KEY) {
-      closePopup();
+      window.closePopup();
     }
   };
 
-  var closePopup = function () {
+  window.closePopup = function () {
     var realCard = document.querySelector('.map__card');
-    mapSection.removeChild(realCard);
-    document.removeEventListener('keydown', onPopupEscPress);
+    if (realCard) {
+      mapSection.removeChild(realCard);
+      document.removeEventListener('keydown', onPopupEscPress);
+    }
   };
 
   var onSecondPinClick = function (evt) {
     var target = evt.target;
     if (target.tagName === 'BUTTON' || target.tagName === 'IMG') {
       var targetClass = Number(target.classList[1]);
-      for (var i = 0; i < newArray.length; i++) {
-        if (targetClass === i) {
-          cardAppend(newArray, i);
-          document.addEventListener('keydown', onPopupEscPress);
+      if (newArray) {
+        for (var i = 0; i < newArray.length; i++) {
+          if (targetClass === i) {
+            cardAppend(newArray, i);
+            document.addEventListener('keydown', onPopupEscPress);
+          }
         }
       }
     }

@@ -4,8 +4,8 @@
 (function () {
   var card = document.querySelector('#card').content.querySelector('.map__card');
 
-  var offerTypeArray = ['palace', 'flat', 'house', 'bungalo'];
-  var offerTypeArrayRus = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
+  var offerTypeArray = ['any', 'palace', 'flat', 'house', 'bungalo'];
+  var offerTypeArrayRus = ['Любой тип жилья', 'Дворец', 'Квартира', 'Дом', 'Бунгало'];
 
   window.getCard = function (advertisementArray, advNumber) {
     var copyCard = card.cloneNode(true);

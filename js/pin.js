@@ -21,4 +21,13 @@
     return pinElement;
   };
 
+  // Удаление visualy-hidden у всех пинов
+
+  window.removePinsHiddenClass = function () {
+    var pinsArray = document.getElementsByClassName('map__pin');
+    for (var i = 1; i < pinsArray.length; i++) {
+      pinsArray[i].classList.remove('visually-hidden');
+    }
+  };
+
 })();
