@@ -56,6 +56,7 @@
     // Заполнение поля features
 
     var cardFeaturesArray = advertisementArray[advNumber].offer.features;
+    var featuresArray = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
     var popupFeatures = copyCard.querySelector('.popup__features');
     var copyCardFetures = copyCard.querySelectorAll('.popup__feature');
 
@@ -64,7 +65,8 @@
     var fillFeatures = function () {
       if (cardFeaturesArray) {
         for (var i = 0; i < cardFeaturesArray.length; i++) {
-          popupFeatures.appendChild(copyCardFetures[i]);
+          var featureNumber = featuresArray.indexOf(cardFeaturesArray[i]);
+          popupFeatures.appendChild(copyCardFetures[featureNumber]);
         }
       } else {
         popupFeatures.textContent = '';

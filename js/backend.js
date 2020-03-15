@@ -1,4 +1,5 @@
 // -------------------------- Модуль по запросу информации с сервера
+
 'use strict';
 (function () {
   window.load = function (onLoad, onError) {
