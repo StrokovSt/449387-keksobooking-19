@@ -3,16 +3,18 @@
 'use strict';
 (function () {
   var mapForm = document.querySelector('.map__filters');
-  var housFeatures = document.querySelector('#housing-features');
-  var housFeaturesInputs = housFeatures.getElementsByTagName('input');
+  var features = document.querySelector('#housing-features');
+  var featuresInputArray = features.getElementsByTagName('input');
 
-  var offerHouseType = {
+  // -------------------------- Фильтры для пинов
+
+  var offerType = {
     offerElement: document.querySelector('#housing-type'),
     offerArray: ['any', 'palace', 'flat', 'house', 'bungalo'],
     offerNumber: 0
   };
 
-  var offerHousePrice = {
+  var offerPrice = {
     offerElement: document.querySelector('#housing-price'),
     offerArray: ['any', 'middle', 'low', 'high'],
     offerNumber: 1
@@ -30,21 +32,21 @@
     offerNumber: 3
   };
 
-  var offerFormArray = [offerHouseType, offerHousePrice, offerRooms, offerGuests];
+  var offerFormArray = [offerType, offerPrice, offerRooms, offerGuests];
   var pinArray = [];
 
-  // -------------------------- Успешная загрузка данных
+  // -------------------------- callback для успешной загрузки данных
 
-  var succsesHandler = function (data) {
+  var onSuccsessfulDataTake = function (data) {
     pinArray = data;
-    window.pinAppend(pinArray);
+    window.map.appendPin(pinArray);
   };
 
-  // -------------------------- Функция отвечающая за
+  // -------------------------- Функция отвечающая за фильтрацию пинов на карте
 
-  var houseTypeFilter = function () {
-    var newPinArray = pinArray;
-    window.closePopup();
+  window.houseTypeFilter = function () {
+    var filteredPinArray = pinArray;
+    window.map.closePopup();
 
     var pinsList = document.getElementsByClassName('second-pin');
     while (pinsList[0]) {
@@ -55,6 +57,8 @@
       var offerElement = obj.offerElement;
       var offerArray = obj.offerArray;
       var offerOptionSelected = offerArray[offerElement.selectedIndex];
+
+      // -------------------------- функции для каждого селекта
 
       var offerTypeSwitcher = function (objType) {
         if (objType.offer.type === offerOptionSelected) {
@@ -107,34 +111,36 @@
 
       var offerSwitcherArray = [offerTypeSwitcher, offerPriceSwitcher, offerRoomsSwitcher, offerGuestsSwitcher];
 
+      // -------------------------- фильтрация списка пинов по селектам
 
       if (offerOptionSelected !== offerArray[0]) {
-        newPinArray = newPinArray.filter(offerSwitcherArray[obj.offerNumber]);
+        filteredPinArray = filteredPinArray.filter(offerSwitcherArray[obj.offerNumber]);
       } else {
-        newPinArray = newPinArray;
+        filteredPinArray = filteredPinArray;
       }
-      return newPinArray;
+      return filteredPinArray;
     };
 
+    // -------------------------- фильтрация списка пинов по филдсету features
+
     var offerFeaturesFilter = function () {
-      for (var i = 0; i < housFeaturesInputs.length; i++) {
-        if (housFeaturesInputs[i].checked) {
-          var meow = housFeaturesInputs[i].value;
-          newPinArray = newPinArray.filter(function (feature) {
-            return feature.offer.features.indexOf(meow) !== -1;
+      for (var i = 0; i < featuresInputArray.length; i++) {
+        if (featuresInputArray[i].checked) {
+          var inputValue = featuresInputArray[i].value;
+          filteredPinArray = filteredPinArray.filter(function (feature) {
+            return feature.offer.features.indexOf(inputValue) !== -1;
           });
         }
       }
     };
 
     offerFeaturesFilter();
-
     offerFormArray.forEach(offerFilter);
-    window.pinAppend(newPinArray);
-    window.removePinsHiddenClass();
+    window.map.appendPin(filteredPinArray);
+    window.pin.removePinsHiddenClass();
   };
 
-  window.load(succsesHandler, window.errorPush);
+  window.backend.load(onSuccsessfulDataTake, window.popup.pushErrorPopup);
+  mapForm.addEventListener('change', window.debounce(window.houseTypeFilter));
 
-  mapForm.addEventListener('change', window.debounce(houseTypeFilter));
 })();

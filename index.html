@@ -173,7 +173,7 @@
           <label class="ad-form__label">Фотография жилья</label>
           <div class="ad-form__photo-container">
             <div class="ad-form__upload">
-              <input type="file" id="images" name="images" class="ad-form__input visually-hidden">
+              <input type="file" id="images" name="images" class="ad-form__input visually-hidden" accept="image/png, image/jpeg">
               <label for="images" class="ad-form__drop-zone">Загрузить<br>фото...</label>
             </div>
             <div class="ad-form__photo"></div>
@@ -250,16 +250,18 @@
     </div>
   </template>
 
-  <script src="js/randomizer.js"></script>
+  <script src="js/supportingModule.js"></script>
+  <script src="js/util.js"></script>
   <script src="js/debounce.js"></script>
-  <script src="js/error-popup.js"></script>
+  <script src="js/popup.js"></script>
   <script src="js/backend.js"></script>
   <script src="js/pin.js"></script>
   <script src="js/card.js"></script>
   <script src="js/map.js"></script>
   <script src="js/mapFilter.js"></script>
-  <script src="js/form.js"></script>
   <script src="js/transposition.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/imageUnload.js"></script>
 
 </body>
 </html>

@@ -17,4 +17,5 @@
       }, DEBOUNCE_INTERVAL);
     };
   };
+
 })();

@@ -10,6 +10,8 @@
   var actualWidth = mapSection.clientWidth;
   var MIN_HEIGHT = 130;
   var MAX_HEIGHT = 630;
+  var DEFAULT_PIN_X = getComputedStyle(mainPin).left;
+  var DEFAULT_PIN_Y = getComputedStyle(mainPin).top;
 
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -49,7 +51,6 @@
       } else if (mainPinTop >= MAX_HEIGHT) {
         mainPin.style.top = MAX_HEIGHT + 'px';
       }
-
     };
 
     var onMouseUp = function (upEvt) {
@@ -65,5 +66,10 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.resetPinPosition = function () {
+    mainPin.style.top = DEFAULT_PIN_Y;
+    mainPin.style.left = DEFAULT_PIN_X;
+  };
 
 })();

@@ -14,50 +14,64 @@
   var capacity = document.querySelector('#capacity');
   var capacityClone = capacity.cloneNode(true);
   var mainPin = document.querySelector('.map__pin--main');
+  var avatarPreview = document.querySelector('.ad-form-header__preview');
+  var avatarImg = avatarPreview.querySelector('img');
+  var homePhotoPreview = document.querySelector('.ad-form__photo');
   var pinWidth = mainPin.clientWidth;
   var pinHeight = mainPin.clientHeight;
   var mainPinLeft = mainPin.offsetLeft;
   var mainPinTop = mainPin.offsetTop;
 
-  //  Функция добавления атрибута disabled
+  // Функции общего доступа модуля form
 
-  window.setDisabled = function (fieldsetArray) {
-    for (var i = 0; i < fieldsetArray.length; i++) {
-      fieldsetArray[i].setAttribute('disabled', true);
-    }
-  };
+  window.form = {
 
-  //  Функция удаления атрибута disabled
+    //  Функция добавления атрибута disabled
 
-  window.deleteDisabled = function (fieldsetArray) {
-    for (var i = 0; i < fieldsetArray.length; i++) {
-      if (fieldsetArray[i].hasAttribute('disabled')) { // нужна ли эта проверка?
-        fieldsetArray[i].removeAttribute('disabled');
+    setDisabled: function (fieldsetArray) {
+      for (var i = 0; i < fieldsetArray.length; i++) {
+        fieldsetArray[i].setAttribute('disabled', true);
+      }
+    },
+
+    //  Функция удаления атрибута disabled
+
+    deleteDisabled: function (fieldsetArray) {
+      for (var i = 0; i < fieldsetArray.length; i++) {
+        if (fieldsetArray[i].hasAttribute('disabled')) { // нужна ли эта проверка?
+          fieldsetArray[i].removeAttribute('disabled');
+        }
       }
     }
   };
 
-  window.setDisabled(fieldsetList);
-  window.setDisabled(mapFilterList);
+  window.form.setDisabled(fieldsetList);
+  window.form.setDisabled(mapFilterList);
+
   //  Заполнение форм
 
   address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + Math.round(pinHeight / 2));
 
   //  Связка атрибута price.min и селекта type
 
-  var onTypeChange = function () {
-    if (type.value === 'bungalo') {
-      price.min = 0;
-      price.placeholder = 0;
-    } else if (type.value === 'flat') {
-      price.min = 1000;
-      price.placeholder = 1000;
-    } else if (type.value === 'house') {
-      price.min = 5000;
-      price.placeholder = 5000;
-    } else if (type.value === 'palace') {
-      price.min = 10000;
-      price.placeholder = 10000;
+  var changeType = function () {
+    switch (type.value) {
+      case ('bungalo'):
+        price.min = 0;
+        price.placeholder = 0;
+        break;
+      case ('flat'):
+        price.min = 1000;
+        price.placeholder = 1000;
+        break;
+      case ('house'):
+        price.min = 5000;
+        price.placeholder = 5000;
+        break;
+      case ('palace'):
+        price.min = 10000;
+        price.placeholder = 10000;
+        break;
     }
   };
 
@@ -75,13 +89,13 @@
 
   timein.addEventListener('change', onTimeinChange);
   timeout.addEventListener('change', onTimeoutChange);
-  onTypeChange();
-  type.addEventListener('change', onTypeChange);
+  changeType();
+  type.addEventListener('change', changeType);
 
   //  Функция заполнения селекта capacity
 
   var getCapacityList = function (min, max) {
-    window.clear(capacity);
+    window.supportingModule.clear(capacity);
     for (var i = min; i < max; i++) {
       var capacityCloneOption = capacityClone[i].cloneNode(true);
       capacityCloneOption.removeAttribute('selected');
@@ -92,42 +106,56 @@
 
   //  Функция синхронизации параметров roomNUmber и capacity
 
-  var onRoomNumberChange = function () {
-    if (roomNumber.value === '1') {
-      getCapacityList(2, 3);
-    } else if (roomNumber.value === '2') {
-      getCapacityList(1, 3);
-    } else if (roomNumber.value === '3') {
-      getCapacityList(0, 3);
-    } else if (roomNumber.value === '100') {
-      getCapacityList(3, 4);
+  var changeRoomNumber = function () {
+    switch (roomNumber.value) {
+      case ('1'):
+        getCapacityList(2, 3);
+        break;
+      case ('2'):
+        getCapacityList(1, 3);
+        break;
+      case ('3'):
+        getCapacityList(0, 3);
+        break;
+      case ('100'):
+        getCapacityList(3, 4);
+        break;
     }
   };
 
   getCapacityList(2, 3);
-  roomNumber.addEventListener('change', onRoomNumberChange);
+  roomNumber.addEventListener('change', changeRoomNumber);
 
   //  Функция для успешной отправки формы
 
-  var formSubmission = function () {
+  var clearForm = function () {
+    window.map.closePopup();
     fieldsetList.reset();
-    window.setDisabled(fieldsetList);
-    window.setDisabled(mapFilterList);
+    mapFilterList.reset();
+    avatarImg.src = 'img/muffin-grey.svg';
+    window.supportingModule.clear(homePhotoPreview);
+    window.houseTypeFilter();
+    window.map.deactivateMap();
+    window.resetPinPosition();
+    address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + Math.round(pinHeight / 2));
+  };
+
+  var submitForm = function () {
+    window.popup.pushSuccessPopup();
+    clearForm();
   };
 
   fieldsetList.addEventListener('submit', function (evt) {
-    window.save(new FormData(fieldsetList), formSubmission, window.errorPush);
+    window.backend.save(new FormData(fieldsetList), submitForm, window.popup.pushErrorPopup);
     evt.preventDefault();
   });
 
   fieldsetResetButton.addEventListener('click', function () {
-    fieldsetList.reset();
+    clearForm();
   });
 
   fieldsetResetButton.addEventListener('keydown', function (evt) {
-    if (evt.key === 'Enter') {
-      fieldsetList.reset();
-    }
+    window.util.enterEvent(evt, clearForm);
   });
 
 })();
