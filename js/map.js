@@ -72,10 +72,10 @@
       pinsArray[i].classList.remove('visually-hidden');
     }
 
-    window.form.deleteDisabled(fieldsetList);
-    window.form.deleteDisabled(mapFilterList);
     mapSection.classList.remove('map--faded');
+    window.form.deleteDisabled(fieldsetList);
     fieldsetList.classList.remove('ad-form--disabled');
+    window.form.deleteDisabled(mapFilterList);
   };
 
   mainPin.addEventListener('mousedown', function (evt) {

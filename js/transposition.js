@@ -6,6 +6,7 @@
   var mainPin = document.querySelector('.map__pin--main');
   var address = document.querySelector('#address');
 
+  var pinHeight = mainPin.clientHeight;
   var pinWidth = mainPin.clientWidth;
   var actualWidth = mapSection.clientWidth;
   var MIN_HEIGHT = 130;
@@ -46,10 +47,10 @@
         mainPin.style.left = 0 - Math.round(pinWidth / 2) + 'px';
       }
 
-      if (mainPinTop <= MIN_HEIGHT) {
-        mainPin.style.top = MIN_HEIGHT + 'px';
-      } else if (mainPinTop >= MAX_HEIGHT) {
-        mainPin.style.top = MAX_HEIGHT + 'px';
+      if (mainPinTop <= MIN_HEIGHT - pinHeight) {
+        mainPin.style.top = (MIN_HEIGHT - pinHeight) + 'px';
+      } else if (mainPinTop >= MAX_HEIGHT - pinHeight) {
+        mainPin.style.top = (MAX_HEIGHT - pinHeight) + 'px';
       }
     };
 
@@ -57,7 +58,7 @@
       upEvt.preventDefault();
       var mainPinLeft = mainPin.offsetLeft;
       var mainPinTop = mainPin.offsetTop;
-      address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + mainPinTop;
+      address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + pinHeight);
 
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);

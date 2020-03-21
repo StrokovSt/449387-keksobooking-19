@@ -150,12 +150,14 @@
     evt.preventDefault();
   });
 
-  fieldsetResetButton.addEventListener('click', function () {
+  fieldsetResetButton.addEventListener('click', function (evt) {
     clearForm();
+    evt.preventDefault();
   });
 
   fieldsetResetButton.addEventListener('keydown', function (evt) {
     window.util.enterEvent(evt, clearForm);
+    evt.preventDefault();
   });
 
 })();

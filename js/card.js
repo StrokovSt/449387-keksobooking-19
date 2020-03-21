@@ -62,13 +62,13 @@
     window.supportingModule.clear(popupFeatures);
 
     var fillFeatures = function () {
-      if (cardFeaturesArray) {
+      if (cardFeaturesArray.length !== 0) {
         for (var i = 0; i < cardFeaturesArray.length; i++) {
           var featureNumber = featuresArray.indexOf(cardFeaturesArray[i]);
           popupFeatures.appendChild(cardCloneFetures[featureNumber]);
         }
       } else {
-        popupFeatures.textContent = '';
+        popupFeatures.style.display = 'none';
       }
     };
 
