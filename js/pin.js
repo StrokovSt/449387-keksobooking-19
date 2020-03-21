@@ -8,13 +8,12 @@
 
     // Функция оздания DOM-элемента - пина объявления
 
-    getPinElement: function (advertisementArray, pinNumber) {
+    getPinElement: function (similarPins, pinNumber) {
       var pinElement = pin.cloneNode(true);
       var pinImg = pinElement.querySelector('img');
-      pinElement.style = 'left: ' + (advertisementArray[pinNumber].location.x - 25) + 'px; top: ' + (advertisementArray[pinNumber].location.y - 70) + 'px;';
-      pinImg.alt = advertisementArray[pinNumber].offer.title;
-      pinImg.src = advertisementArray[pinNumber].author.avatar;
-      pinElement.classList.add('visually-hidden');
+      pinElement.style = 'left: ' + (similarPins[pinNumber].location.x - 25) + 'px; top: ' + (similarPins[pinNumber].location.y - 70) + 'px;';
+      pinImg.alt = similarPins[pinNumber].offer.title;
+      pinImg.src = similarPins[pinNumber].author.avatar;
       pinElement.classList.add(pinNumber);
       pinElement.classList.add('second-pin');
       pinImg.classList.add('pin__avatar');
@@ -25,9 +24,9 @@
     // Функция удаления класса visualy-hidden у пинов
 
     removePinsHiddenClass: function () {
-      var pinsArray = document.getElementsByClassName('map__pin');
-      for (var i = 1; i < pinsArray.length; i++) {
-        pinsArray[i].classList.remove('visually-hidden');
+      var pins = document.getElementsByClassName('map__pin');
+      for (var i = 1; i < pins.length; i++) {
+        pins[i].classList.remove('visually-hidden');
       }
     }
 

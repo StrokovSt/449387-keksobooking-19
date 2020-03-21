@@ -18,7 +18,7 @@
   };
 
   window.popup = {
-    pushErrorPopup: function (message) {
+    pushError: function (message) {
       mapSection.appendChild(renderError(message));
       var closeButton = document.querySelector('.error__button');
       var errorPopup = document.querySelector('.error');
@@ -27,34 +27,36 @@
         mapSection.querySelector('.error').remove();
       });
 
-      var removePopup = function () {
+      var onPopupClose = function () {
         errorPopup.remove();
-        document.removeEventListener('keydown', removePopup);
+        document.removeEventListener('keydown', onPopupEscPress);
+        document.removeEventListener('click', onPopupClose);
       };
 
       var onPopupEscPress = function (evt) {
-        window.util.escEvent(evt, removePopup);
+        window.util.escEvent(evt, onPopupClose);
       };
 
       document.addEventListener('keydown', onPopupEscPress);
     },
 
-    pushSuccessPopup: function (message) {
+    pushSuccess: function (message) {
       mapSection.appendChild(renderSuccess(message));
 
       var successPopup = document.querySelector('.success');
 
-      var removePopup = function () {
+      var onPopupClose = function () {
         successPopup.remove();
-        document.removeEventListener('keydown', removePopup);
+        document.removeEventListener('keydown', onPopupEscPress);
+        document.removeEventListener('click', onPopupClose);
       };
 
       var onPopupEscPress = function (evt) {
-        window.util.escEvent(evt, removePopup);
+        window.util.escEvent(evt, onPopupClose);
       };
 
       document.addEventListener('keydown', onPopupEscPress);
-      document.addEventListener('click', removePopup);
+      document.addEventListener('click', onPopupClose);
     }
   };
 

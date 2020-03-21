@@ -4,7 +4,11 @@
 (function () {
   var mapForm = document.querySelector('.map__filters');
   var features = document.querySelector('#housing-features');
-  var featuresInputArray = features.getElementsByTagName('input');
+  var featureInputs = features.getElementsByTagName('input');
+  var mapFilterList = document.querySelector('.map__filters');
+
+  var LOWER_PRICE_LIMIT = 10000;
+  var UPPER_PRICE_LIMIT = 50000;
 
   // -------------------------- Фильтры для пинов
 
@@ -32,115 +36,95 @@
     offerNumber: 3
   };
 
-  var offerFormArray = [offerType, offerPrice, offerRooms, offerGuests];
-  var pinArray = [];
+  var offerFilters = [offerType, offerPrice, offerRooms, offerGuests];
+  var pins = [];
 
-  // -------------------------- callback для успешной загрузки данных
+  window.mapFilter = {
 
-  var onSuccsessfulDataTake = function (data) {
-    pinArray = data;
-    window.map.appendPin(pinArray);
-  };
+    // -------------------------- callback для успешной загрузки данных
 
-  // -------------------------- Функция отвечающая за фильтрацию пинов на карте
+    onSuccsessfulDataTake: function (data) {
+      pins = data;
+      window.map.appendPin(pins);
+      window.form.deleteDisabled(mapFilterList);
+    },
 
-  window.houseTypeFilter = function () {
-    var filteredPinArray = pinArray;
-    window.map.closePopup();
+     // -------------------------- фильтрация пинов
 
-    var pinsList = document.getElementsByClassName('second-pin');
-    while (pinsList[0]) {
-      pinsList[0].remove();
+    pinsFilter: function () {
+      var mappedPins = document.getElementsByClassName('second-pin');
+      var newPins = pins.slice();
+      var selectedFilters = [];
+      var selectedFeatures = [];
+      var filteredPins = [];
+
+      window.map.closePopup();
+      while (mappedPins[0]) {
+        mappedPins[0].remove();
+      };
+
+      for (var i = 0; i < offerFilters.length; i++) {
+        var offerElement = offerFilters[i].offerElement;
+        var offerArray = offerFilters[i].offerArray;
+        var offerOptionSelected = offerArray[offerElement.selectedIndex];
+        selectedFilters.push(offerOptionSelected);
+      };
+
+      for (var i = 0; i < featureInputs.length; i++) {
+        if (featureInputs[i].checked) {
+          var inputValue = featureInputs[i].value;
+          selectedFeatures.push(inputValue);
+        }
+      };
+
+      for (var i = 0; i < newPins.length; i++) {
+        var pinType = newPins[i].offer.type;
+        var pinPrice = newPins[i].offer.price;
+        var pinRooms = newPins[i].offer.rooms;
+        var pinGuets = newPins[i].offer.guests;
+        var pinFeatures = newPins[i].offer.features;
+        var pinQuality = 0;
+
+        if (selectedFilters[0] === 'any' || pinType === selectedFilters[0]) {
+          pinQuality ++;
+        };
+
+        if (selectedFilters[1] === 'any'
+        || (selectedFilters[1] === 'middle' && pinPrice >= LOWER_PRICE_LIMIT && pinPrice <= UPPER_PRICE_LIMIT)
+        || (selectedFilters[1] === 'low' && pinPrice < LOWER_PRICE_LIMIT)
+        || (selectedFilters[1] === 'high' && pinPrice > UPPER_PRICE_LIMIT)) {
+          pinQuality ++;
+        };
+
+        if (selectedFilters[2] === 'any' || pinRooms === Number(selectedFilters[2])) {
+          pinQuality ++;
+        };
+
+        if (selectedFilters[3] === 'any' || pinGuets === Number(selectedFilters[3])) {
+          pinQuality ++;
+        };
+
+        if (selectedFeatures.length !== 0 && pinFeatures.length !== 0) {
+          for (var j = 0; j < selectedFeatures.length; j++) {
+            if (pinFeatures.includes(selectedFeatures[j])) {
+              pinQuality ++;
+            }
+          }
+        };
+
+        if (pinQuality === (4 + selectedFeatures.length)) {
+          filteredPins.push(newPins[i]);
+        };
+
+        if (filteredPins.length >= 5) {
+          break;
+        };
+      }
+
+      window.map.appendPin(filteredPins);
     }
-
-    var offerFilter = function (obj) {
-      var offerElement = obj.offerElement;
-      var offerArray = obj.offerArray;
-      var offerOptionSelected = offerArray[offerElement.selectedIndex];
-
-      // -------------------------- функции для каждого селекта
-
-      var offerTypeSwitcher = function (objType) {
-        if (objType.offer.type === offerOptionSelected) {
-          return true;
-        }
-        return false;
-      };
-
-      var offerPriceSwitcher = function (objPrice) {
-        var LOWER_PRICE_LIMIT = 10000;
-        var UPPER_PRICE_LIMIT = 50000;
-
-        var housePrice = objPrice.offer.price;
-        switch (offerOptionSelected) {
-          case offerArray[1]:
-            if (housePrice >= LOWER_PRICE_LIMIT && housePrice <= UPPER_PRICE_LIMIT) {
-              return true;
-            } else {
-              return false;
-            }
-          case offerArray[2]:
-            if (housePrice < LOWER_PRICE_LIMIT) {
-              return true;
-            } else {
-              return false;
-            }
-          case offerArray[3]:
-            if (housePrice > UPPER_PRICE_LIMIT) {
-              return true;
-            } else {
-              return false;
-            }
-        }
-        return false;
-      };
-
-      var offerRoomsSwitcher = function (objRooms) {
-        if (objRooms.offer.rooms === Number(offerOptionSelected)) {
-          return true;
-        }
-        return false;
-      };
-
-      var offerGuestsSwitcher = function (objGuests) {
-        if (objGuests.offer.guests === Number(offerOptionSelected)) {
-          return true;
-        }
-        return false;
-      };
-
-      var offerSwitcherArray = [offerTypeSwitcher, offerPriceSwitcher, offerRoomsSwitcher, offerGuestsSwitcher];
-
-      // -------------------------- фильтрация списка пинов по селектам
-
-      if (offerOptionSelected !== offerArray[0]) {
-        filteredPinArray = filteredPinArray.filter(offerSwitcherArray[obj.offerNumber]);
-      } else {
-        filteredPinArray = filteredPinArray;
-      }
-      return filteredPinArray;
-    };
-
-    // -------------------------- фильтрация списка пинов по филдсету features
-
-    var offerFeaturesFilter = function () {
-      for (var i = 0; i < featuresInputArray.length; i++) {
-        if (featuresInputArray[i].checked) {
-          var inputValue = featuresInputArray[i].value;
-          filteredPinArray = filteredPinArray.filter(function (feature) {
-            return feature.offer.features.indexOf(inputValue) !== -1;
-          });
-        }
-      }
-    };
-
-    offerFeaturesFilter();
-    offerFormArray.forEach(offerFilter);
-    window.map.appendPin(filteredPinArray);
-    window.pin.removePinsHiddenClass();
   };
 
-  window.backend.load(onSuccsessfulDataTake, window.popup.pushErrorPopup);
-  mapForm.addEventListener('change', window.debounce(window.houseTypeFilter));
+  mapForm.addEventListener('change', window.debounce(window.mapFilter.pinsFilter));
 
 })();

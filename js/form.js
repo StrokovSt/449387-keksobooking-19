@@ -38,7 +38,7 @@
 
     deleteDisabled: function (fieldsetArray) {
       for (var i = 0; i < fieldsetArray.length; i++) {
-        if (fieldsetArray[i].hasAttribute('disabled')) { // нужна ли эта проверка?
+        if (fieldsetArray[i].hasAttribute('disabled')) {
           fieldsetArray[i].removeAttribute('disabled');
         }
       }
@@ -134,19 +134,20 @@
     mapFilterList.reset();
     avatarImg.src = 'img/muffin-grey.svg';
     window.supportingModule.clear(homePhotoPreview);
-    window.houseTypeFilter();
+    window.mapFilter.pinsFilter();
     window.map.deactivateMap();
     window.resetPinPosition();
     address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + Math.round(pinHeight / 2));
+    changeType();
   };
 
   var submitForm = function () {
-    window.popup.pushSuccessPopup();
+    window.popup.pushSuccess();
     clearForm();
   };
 
   fieldsetList.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(fieldsetList), submitForm, window.popup.pushErrorPopup);
+    window.backend.save(new FormData(fieldsetList), submitForm, window.popup.pushError);
     evt.preventDefault();
   });
 

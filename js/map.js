@@ -6,10 +6,10 @@
   var pinsList = document.querySelector('.map__pins');
   var filerContainer = document.querySelector('.map__filters-container');
   var mainPin = document.querySelector('.map__pin--main');
-  var pinsArray = document.getElementsByClassName('map__pin');
+  var includedPins = document.getElementsByClassName('map__pin');
   var fieldsetList = document.querySelector('.ad-form');
   var mapFilterList = document.querySelector('.map__filters');
-  var newArray;
+  var updatedPins;
 
   // Функции общего доступа модуля map
 
@@ -17,12 +17,12 @@
 
     // Функции добавления пинов на карту
 
-    appendPin: function (advertisementArray) {
-      newArray = advertisementArray;
-      var pinNumber = advertisementArray.length > 5 ? 5 : advertisementArray.length;
+    appendPin: function (similarPins) {
+      updatedPins = similarPins;
+      var pinNumber = similarPins.length > 5 ? 5 : similarPins.length;
       var fragment = document.createDocumentFragment();
       for (var i = 0; i < pinNumber; i++) {
-        fragment.appendChild(window.pin.getPinElement(advertisementArray, i));
+        fragment.appendChild(window.pin.getPinElement(similarPins, i));
       }
       pinsList.appendChild(fragment);
     },
@@ -35,8 +35,8 @@
       fieldsetList.classList.add('ad-form--disabled');
       mapSection.classList.add('map--faded');
 
-      for (var i = 1; i < pinsArray.length; i++) {
-        pinsArray[i].classList.add('visually-hidden');
+      for (var i = 1; i < includedPins.length; i++) {
+        includedPins[i].classList.add('visually-hidden');
       }
     },
 
@@ -54,13 +54,13 @@
 
   // Функция добавления карточки объявления
 
-  var appendCard = function (advertisementArray, advNumber) {
+  var appendCard = function (similarPins, advNumber) {
     var realCard = document.querySelector('.map__card');
     if (realCard) {
       mapSection.removeChild(realCard);
     }
     var fragment = document.createDocumentFragment();
-    fragment.appendChild(window.getCard(advertisementArray, advNumber));
+    fragment.appendChild(window.getCard(similarPins, advNumber));
     mapSection.insertBefore(fragment, filerContainer);
 
     var closeButton = document.querySelector('.popup__close');
@@ -68,14 +68,12 @@
   };
 
   var activateMap = function () {
-    for (var i = 1; i < pinsArray.length; i++) {
-      pinsArray[i].classList.remove('visually-hidden');
+    if (mapSection.classList.contains('map--faded')) {
+      mapSection.classList.remove('map--faded');
+      fieldsetList.classList.remove('ad-form--disabled');
+      window.backend.load(window.mapFilter.onSuccsessfulDataTake, window.popup.pushError);
     }
-
-    mapSection.classList.remove('map--faded');
     window.form.deleteDisabled(fieldsetList);
-    fieldsetList.classList.remove('ad-form--disabled');
-    window.form.deleteDisabled(mapFilterList);
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
@@ -91,32 +89,31 @@
   };
 
   var cleanPinClassList = function () {
-    var secondPinsArray = pinsList.getElementsByClassName('second-pin');
-    var realsecondPinsArray = Array.from(secondPinsArray);
-
-    realsecondPinsArray.forEach(function (pin) {
-      pin.classList.remove('map__pin--active');
+    var secondaryPins = pinsList.getElementsByClassName('second-pin');
+    var realSecondaryPins = Array.from(secondaryPins);
+    var activePins = realSecondaryPins.filter(function (pin) {
+      return pin.classList.contains('map__pin--active') ? true : false;
     });
+    if (activePins.length !== 0) {
+      activePins[0].classList.remove('map__pin--active');
+    };
   };
 
   var onSecondPinClick = function (evt) {
-    var secondPinsArray = pinsList.getElementsByClassName('second-pin');
-    var realsecondPinsArray = Array.from(secondPinsArray);
-
+    var secondaryPins = pinsList.getElementsByClassName('second-pin');
+    var realSecondaryPins = Array.from(secondaryPins);
     var target = evt.target;
+
     if (target.classList[2] === 'second-pin' || target.classList[0] === 'pin__avatar') {
       var targetClass = Number(target.classList[1]);
-
-      realsecondPinsArray.forEach(function (pin) {
-        pin.classList.remove('map__pin--active');
-      });
-
-      if (newArray) {
-        for (var i = 0; i < newArray.length; i++) {
+      cleanPinClassList();
+      if (updatedPins) {
+        for (var i = 0; i < updatedPins.length; i++) {
           if (targetClass === i) {
-            secondPinsArray[i].classList.add('map__pin--active');
-            appendCard(newArray, i);
+            secondaryPins[i].classList.add('map__pin--active');
+            appendCard(updatedPins, i);
             document.addEventListener('keydown', onPopupEscPress);
+            break;
           }
         }
       }
