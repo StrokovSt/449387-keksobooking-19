@@ -17,10 +17,11 @@
   var avatarPreview = document.querySelector('.ad-form-header__preview');
   var avatarImg = avatarPreview.querySelector('img');
   var homePhotoPreview = document.querySelector('.ad-form__photo');
-  var pinWidth = mainPin.clientWidth;
-  var pinHeight = mainPin.clientHeight;
   var mainPinLeft = mainPin.offsetLeft;
   var mainPinTop = mainPin.offsetTop;
+
+  var PIN_WIDTH = mainPin.clientWidth;
+  var PIN_HEIGHT = mainPin.clientHeight;
 
   // Функции общего доступа модуля form
 
@@ -50,7 +51,7 @@
 
   //  Заполнение форм
 
-  address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + Math.round(pinHeight / 2));
+  address.value = mainPinLeft + Math.round(PIN_WIDTH / 2) + ', ' + (mainPinTop + Math.round(PIN_HEIGHT / 2));
 
   //  Связка атрибута price.min и селекта type
 
@@ -137,8 +138,9 @@
     window.mapFilter.pinsFilter();
     window.map.deactivateMap();
     window.resetPinPosition();
-    address.value = mainPinLeft + Math.round(pinWidth / 2) + ', ' + (mainPinTop + Math.round(pinHeight / 2));
+    address.value = mainPinLeft + Math.round(PIN_WIDTH / 2) + ', ' + (mainPinTop + Math.round(PIN_HEIGHT / 2));
     changeType();
+    getCapacityList(2, 3);
   };
 
   var submitForm = function () {

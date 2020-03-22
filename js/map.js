@@ -10,6 +10,7 @@
   var fieldsetList = document.querySelector('.ad-form');
   var mapFilterList = document.querySelector('.map__filters');
   var updatedPins;
+  var PINS_MAX_LENGTH = 5;
 
   // Функции общего доступа модуля map
 
@@ -19,7 +20,7 @@
 
     appendPin: function (similarPins) {
       updatedPins = similarPins;
-      var pinNumber = similarPins.length > 5 ? 5 : similarPins.length;
+      var pinNumber = similarPins.length > PINS_MAX_LENGTH ? PINS_MAX_LENGTH : similarPins.length;
       var fragment = document.createDocumentFragment();
       for (var i = 0; i < pinNumber; i++) {
         fragment.appendChild(window.pin.getPinElement(similarPins, i));
@@ -96,12 +97,11 @@
     });
     if (activePins.length !== 0) {
       activePins[0].classList.remove('map__pin--active');
-    };
+    }
   };
 
   var onSecondPinClick = function (evt) {
     var secondaryPins = pinsList.getElementsByClassName('second-pin');
-    var realSecondaryPins = Array.from(secondaryPins);
     var target = evt.target;
 
     if (target.classList[2] === 'second-pin' || target.classList[0] === 'pin__avatar') {

@@ -4,11 +4,13 @@
 (function () {
   var mapForm = document.querySelector('.map__filters');
   var features = document.querySelector('#housing-features');
-  var featureInputs = features.getElementsByTagName('input');
+  var featureInputs = features.getElementsByClassName('map__checkbox');
   var mapFilterList = document.querySelector('.map__filters');
 
   var LOWER_PRICE_LIMIT = 10000;
   var UPPER_PRICE_LIMIT = 50000;
+  var FILTERS_NUMBER = 4;
+  var FILTERED_PINS_MAX_LENGTH = 5;
 
   // -------------------------- Фильтры для пинов
 
@@ -49,7 +51,7 @@
       window.form.deleteDisabled(mapFilterList);
     },
 
-     // -------------------------- фильтрация пинов
+    // -------------------------- фильтрация пинов
 
     pinsFilter: function () {
       var mappedPins = document.getElementsByClassName('second-pin');
@@ -61,21 +63,21 @@
       window.map.closePopup();
       while (mappedPins[0]) {
         mappedPins[0].remove();
-      };
+      }
 
-      for (var i = 0; i < offerFilters.length; i++) {
-        var offerElement = offerFilters[i].offerElement;
-        var offerArray = offerFilters[i].offerArray;
+      for (var n = 0; n < offerFilters.length; n++) {
+        var offerElement = offerFilters[n].offerElement;
+        var offerArray = offerFilters[n].offerArray;
         var offerOptionSelected = offerArray[offerElement.selectedIndex];
         selectedFilters.push(offerOptionSelected);
-      };
+      }
 
-      for (var i = 0; i < featureInputs.length; i++) {
-        if (featureInputs[i].checked) {
-          var inputValue = featureInputs[i].value;
+      for (var k = 0; k < featureInputs.length; k++) {
+        if (featureInputs[k].checked) {
+          var inputValue = featureInputs[k].value;
           selectedFeatures.push(inputValue);
         }
-      };
+      }
 
       for (var i = 0; i < newPins.length; i++) {
         var pinType = newPins[i].offer.type;
@@ -86,39 +88,39 @@
         var pinQuality = 0;
 
         if (selectedFilters[0] === 'any' || pinType === selectedFilters[0]) {
-          pinQuality ++;
-        };
+          pinQuality++;
+        }
 
         if (selectedFilters[1] === 'any'
         || (selectedFilters[1] === 'middle' && pinPrice >= LOWER_PRICE_LIMIT && pinPrice <= UPPER_PRICE_LIMIT)
         || (selectedFilters[1] === 'low' && pinPrice < LOWER_PRICE_LIMIT)
         || (selectedFilters[1] === 'high' && pinPrice > UPPER_PRICE_LIMIT)) {
-          pinQuality ++;
-        };
+          pinQuality++;
+        }
 
         if (selectedFilters[2] === 'any' || pinRooms === Number(selectedFilters[2])) {
-          pinQuality ++;
-        };
+          pinQuality++;
+        }
 
         if (selectedFilters[3] === 'any' || pinGuets === Number(selectedFilters[3])) {
-          pinQuality ++;
-        };
+          pinQuality++;
+        }
 
         if (selectedFeatures.length !== 0 && pinFeatures.length !== 0) {
           for (var j = 0; j < selectedFeatures.length; j++) {
             if (pinFeatures.includes(selectedFeatures[j])) {
-              pinQuality ++;
+              pinQuality++;
             }
           }
-        };
+        }
 
-        if (pinQuality === (4 + selectedFeatures.length)) {
+        if (pinQuality === (FILTERS_NUMBER + selectedFeatures.length)) {
           filteredPins.push(newPins[i]);
-        };
+        }
 
-        if (filteredPins.length >= 5) {
+        if (filteredPins.length >= FILTERED_PINS_MAX_LENGTH) {
           break;
-        };
+        }
       }
 
       window.map.appendPin(filteredPins);

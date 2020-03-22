@@ -3,6 +3,8 @@
 'use strict';
 (function () {
   var pin = document.querySelector('#pin').content.querySelector('.map__pin');
+  var PID_WIDTH = 25;
+  var PIN_HEIGHT = 70;
 
   window.pin = {
 
@@ -11,7 +13,7 @@
     getPinElement: function (similarPins, pinNumber) {
       var pinElement = pin.cloneNode(true);
       var pinImg = pinElement.querySelector('img');
-      pinElement.style = 'left: ' + (similarPins[pinNumber].location.x - 25) + 'px; top: ' + (similarPins[pinNumber].location.y - 70) + 'px;';
+      pinElement.style = 'left: ' + (similarPins[pinNumber].location.x - PID_WIDTH) + 'px; top: ' + (similarPins[pinNumber].location.y - PIN_HEIGHT) + 'px;';
       pinImg.alt = similarPins[pinNumber].offer.title;
       pinImg.src = similarPins[pinNumber].author.avatar;
       pinElement.classList.add(pinNumber);
