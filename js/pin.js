@@ -13,7 +13,7 @@
     getPinElement: function (similarPins, pinNumber) {
       var pinElement = pin.cloneNode(true);
       var pinImg = pinElement.querySelector('img');
-      pinElement.style = 'left: ' + (similarPins[pinNumber].location.x - PID_WIDTH) + 'px; top: ' + (similarPins[pinNumber].location.y - PIN_HEIGHT) + 'px;';
+      pinElement.style.cssText = 'left: ' + (similarPins[pinNumber].location.x - PID_WIDTH) + 'px; top: ' + (similarPins[pinNumber].location.y - PIN_HEIGHT) + 'px;';
       pinImg.alt = similarPins[pinNumber].offer.title;
       pinImg.src = similarPins[pinNumber].author.avatar;
       pinElement.classList.add(pinNumber);
@@ -31,7 +31,6 @@
         pins[i].classList.remove('visually-hidden');
       }
     }
-
   };
 
 })();
