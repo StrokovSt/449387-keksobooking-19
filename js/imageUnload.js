@@ -14,7 +14,6 @@
 
   var photoCheck = function (file) {
     var fileName = file.name.toLowerCase();
-
     var matches = FILE_TYPES.some(function (it) {
       return fileName.endsWith(it);
     });
@@ -22,18 +21,14 @@
     return matches;
   };
 
-
   avatarInput.addEventListener('change', function () {
     var file = avatarInput.files[0];
     var matches = photoCheck(file);
-
     if (matches) {
       var reader = new FileReader();
-
       reader.addEventListener('load', function () {
         avatarImg.src = reader.result;
       });
-
       reader.readAsDataURL(file);
     }
   });
@@ -44,7 +39,6 @@
 
     if (matches) {
       var reader = new FileReader();
-
       reader.addEventListener('load', function () {
         var newPhoto = document.createElement('img');
         newPhoto.width = PHOTO_SIDE;

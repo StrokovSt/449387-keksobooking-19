@@ -23,6 +23,26 @@
   var PIN_WIDTH = mainPin.clientWidth;
   var PIN_HEIGHT = mainPin.clientHeight;
 
+  var ONE_ROOM = {
+    min: 2,
+    max: 3
+  };
+
+  var TWO_ROOMS = {
+    min: 1,
+    max: 3
+  };
+
+  var THREE_ROOMS = {
+    min: 0,
+    max: 3
+  };
+
+  var HUNDRED_ROOMS = {
+    min: 3,
+    max: 4
+  };
+
   // Функции общего доступа модуля form
 
   window.form = {
@@ -110,21 +130,21 @@
   var changeRoomNumber = function () {
     switch (roomNumber.value) {
       case ('1'):
-        getCapacityList(2, 3);
+        getCapacityList(ONE_ROOM.min, ONE_ROOM.max);
         break;
       case ('2'):
-        getCapacityList(1, 3);
+        getCapacityList(TWO_ROOMS.min, TWO_ROOMS.max);
         break;
       case ('3'):
-        getCapacityList(0, 3);
+        getCapacityList(THREE_ROOMS.min, THREE_ROOMS.max);
         break;
       case ('100'):
-        getCapacityList(3, 4);
+        getCapacityList(HUNDRED_ROOMS.min, HUNDRED_ROOMS.max);
         break;
     }
   };
 
-  getCapacityList(2, 3);
+  getCapacityList(ONE_ROOM.min, ONE_ROOM.max);
   roomNumber.addEventListener('change', changeRoomNumber);
 
   //  Функция для успешной отправки формы
@@ -140,7 +160,7 @@
     window.resetPinPosition();
     address.value = mainPinLeft + Math.round(PIN_WIDTH / 2) + ', ' + (mainPinTop + Math.round(PIN_HEIGHT / 2));
     changeType();
-    getCapacityList(2, 3);
+    getCapacityList(ONE_ROOM.min, ONE_ROOM.max);
   };
 
   var submitForm = function () {
