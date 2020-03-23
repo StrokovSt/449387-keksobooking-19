@@ -21,15 +21,6 @@
       pinImg.classList.add('pin__avatar');
       pinImg.classList.add(pinNumber);
       return pinElement;
-    },
-
-    // Функция удаления класса visualy-hidden у пинов
-
-    removePinsHiddenClass: function () {
-      var pins = document.getElementsByClassName('map__pin');
-      for (var i = 1; i < pins.length; i++) {
-        pins[i].classList.remove('visually-hidden');
-      }
     }
   };
 

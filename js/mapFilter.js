@@ -4,7 +4,7 @@
 (function () {
   var mapForm = document.querySelector('.map__filters');
   var features = document.querySelector('#housing-features');
-  var featureInputs = features.getElementsByClassName('map__checkbox');
+  var featureInputs = features.querySelectorAll('.map__checkbox');
   var mapFilterList = document.querySelector('.map__filters');
 
   var LOWER_PRICE_LIMIT = 10000;
@@ -16,25 +16,25 @@
 
   var offerType = {
     offerElement: document.querySelector('#housing-type'),
-    offerArray: ['any', 'palace', 'flat', 'house', 'bungalo'],
+    offerOptions: ['any', 'palace', 'flat', 'house', 'bungalo'],
     offerNumber: 0
   };
 
   var offerPrice = {
     offerElement: document.querySelector('#housing-price'),
-    offerArray: ['any', 'middle', 'low', 'high'],
+    offerOptions: ['any', 'middle', 'low', 'high'],
     offerNumber: 1
   };
 
   var offerRooms = {
     offerElement: document.querySelector('#housing-rooms'),
-    offerArray: ['any', '1', '2', '3'],
+    offerOptions: ['any', '1', '2', '3'],
     offerNumber: 2
   };
 
   var offerGuests = {
     offerElement: document.querySelector('#housing-guests'),
-    offerArray: ['any', '2', '1', '0'],
+    offerOptions: ['any', '2', '1', '0'],
     offerNumber: 3
   };
 
@@ -67,8 +67,8 @@
 
       for (var n = 0; n < offerFilters.length; n++) {
         var offerElement = offerFilters[n].offerElement;
-        var offerArray = offerFilters[n].offerArray;
-        var offerOptionSelected = offerArray[offerElement.selectedIndex];
+        var offerOptions = offerFilters[n].offerOptions;
+        var offerOptionSelected = offerOptions[offerElement.selectedIndex];
         selectedFilters.push(offerOptionSelected);
       }
 
@@ -127,6 +127,6 @@
     }
   };
 
-  mapForm.addEventListener('change', window.debounce(window.mapFilter.pinsFilter));
+  mapForm.addEventListener('change', window.supportingModule.debounce(window.mapFilter.pinsFilter));
 
 })();

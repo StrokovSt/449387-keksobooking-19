@@ -49,18 +49,18 @@
 
     //  Функция добавления атрибута disabled
 
-    setDisabled: function (fieldsetArray) {
-      for (var i = 0; i < fieldsetArray.length; i++) {
-        fieldsetArray[i].setAttribute('disabled', true);
+    setDisabled: function (fieldsets) {
+      for (var i = 0; i < fieldsets.length; i++) {
+        fieldsets[i].setAttribute('disabled', true);
       }
     },
 
     //  Функция удаления атрибута disabled
 
-    deleteDisabled: function (fieldsetArray) {
-      for (var i = 0; i < fieldsetArray.length; i++) {
-        if (fieldsetArray[i].hasAttribute('disabled')) {
-          fieldsetArray[i].removeAttribute('disabled');
+    deleteDisabled: function (fieldsets) {
+      for (var i = 0; i < fieldsets.length; i++) {
+        if (fieldsets[i].hasAttribute('disabled')) {
+          fieldsets[i].removeAttribute('disabled');
         }
       }
     }

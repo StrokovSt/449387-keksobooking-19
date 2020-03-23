@@ -6,7 +6,6 @@
   var pinsList = document.querySelector('.map__pins');
   var filerContainer = document.querySelector('.map__filters-container');
   var mainPin = document.querySelector('.map__pin--main');
-  var includedPins = document.getElementsByClassName('map__pin');
   var fieldsetList = document.querySelector('.ad-form');
   var mapFilterList = document.querySelector('.map__filters');
   var updatedPins;
@@ -31,6 +30,7 @@
     // Функции деактивации карты
 
     deactivateMap: function () {
+      var includedPins = document.querySelectorAll('.map__pin');
       window.form.setDisabled(fieldsetList);
       window.form.setDisabled(mapFilterList);
       fieldsetList.classList.add('ad-form--disabled');
@@ -90,7 +90,7 @@
   };
 
   var cleanPinClassList = function () {
-    var secondaryPins = pinsList.getElementsByClassName('second-pin');
+    var secondaryPins = pinsList.querySelectorAll('.second-pin');
     var realSecondaryPins = Array.from(secondaryPins);
     var activePins = realSecondaryPins.filter(function (pin) {
       return pin.classList.contains('map__pin--active') ? true : false;
@@ -101,7 +101,7 @@
   };
 
   var onSecondPinClick = function (evt) {
-    var secondaryPins = pinsList.getElementsByClassName('second-pin');
+    var secondaryPins = pinsList.querySelectorAll('.second-pin');
     var target = evt.target;
 
     if (target.classList[2] === 'second-pin' || target.classList[0] === 'pin__avatar') {
