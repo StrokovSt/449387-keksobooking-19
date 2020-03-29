@@ -12,8 +12,6 @@
   var FILTERS_NUMBER = 4;
   var FILTERED_PINS_MAX_LENGTH = 5;
 
-  console.log('meow');
-
   // -------------------------- Фильтры для пинов
 
   var offerType = {
